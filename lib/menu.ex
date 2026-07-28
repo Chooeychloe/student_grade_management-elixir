@@ -5,9 +5,9 @@ defmodule Menu do
 
   def show_menu do
     IO.puts("")
-    IO.puts("===================================")
+    IO.puts("========================================")
     IO.puts(" Student Grade Management System")
-    IO.puts("===================================")
+    IO.puts("========================================")
     IO.puts("1. Add Student")
     IO.puts("2. View Students")
     IO.puts("3. Search Student")
@@ -16,7 +16,7 @@ defmodule Menu do
     IO.puts("6. Save Records")
     IO.puts("7. Load Records")
     IO.puts("8. Exit")
-    IO.puts("===================================")
+    IO.puts("========================================")
   end
 
   def start do
@@ -33,9 +33,9 @@ defmodule Menu do
 
     case choice do
       "1" ->
-        students
-        |> StudentService.add_student()
-        |> loop()
+        students = StudentService.add_student(students)
+        Utils.pause()
+        loop(students)
 
       "2" ->
         StudentService.view_students(students)
@@ -64,7 +64,6 @@ defmodule Menu do
 
       "7" ->
         students = Storage.load_students()
-        IO.puts("Records loaded successfully.")
         Utils.pause()
         loop(students)
 
@@ -73,7 +72,7 @@ defmodule Menu do
         IO.puts("Goodbye!")
 
       _ ->
-        IO.puts("Invalid choice.")
+        IO.puts("Invalid menu choice.")
         Utils.pause()
         loop(students)
     end

@@ -5,11 +5,12 @@ defmodule Storage do
     content =
       students
       |> Enum.map(&student_to_csv/1)
-      |> Enum.join("\n")
+      |> Enum.map(&(&1 <> "\n"))
+      |> Enum.join("")
 
     case File.write(@filename, content) do
       :ok ->
-        IO.puts("Records saved successfully.")
+        IO.puts("Students saved successfully.")
 
       {:error, reason} ->
         IO.puts("Failed to save records: #{inspect(reason)}")
@@ -22,6 +23,7 @@ defmodule Storage do
       |> File.read!()
       |> String.split("\n", trim: true)
       |> Enum.map(&csv_to_student/1)
+      |> Enum.reject(&is_nil/1)
     else
       []
     end
@@ -41,15 +43,18 @@ defmodule Storage do
   end
 
   defp csv_to_student(line) do
-    [id, name, math, science, english] =
-      String.split(line, ",")
+    case String.split(line, ",") do
+      [id, name, math, science, english] ->
+        %Student{
+          id: id,
+          name: name,
+          math: String.to_integer(math),
+          science: String.to_integer(science),
+          english: String.to_integer(english)
+        }
 
-    %Student{
-      id: id,
-      name: name,
-      math: String.to_integer(math),
-      science: String.to_integer(science),
-      english: String.to_integer(english)
-    }
+      _ ->
+        nil
+    end
   end
 end
